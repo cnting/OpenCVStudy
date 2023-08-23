@@ -7,6 +7,6 @@ find_package(OpenCV)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(OpenCVStudy  2.Mat操作.cpp)
+add_executable(OpenCVStudy  5.采样.cpp)
 
 target_link_libraries(OpenCVStudy ${OpenCV_LIBS})

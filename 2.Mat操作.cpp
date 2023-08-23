@@ -29,7 +29,7 @@ void test1() {
     cout << cols << " " << rows << " " << channels << endl;
 
     /**
-     * 创建Mat1
+     * 创建Mat
      * CV_8UC1 单颜色通道 0~255
      * CV_8UC2 2颜色通道 16位  对应RGB565
      * CV_8UC3 3颜色通道 24位
