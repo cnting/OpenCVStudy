@@ -131,7 +131,8 @@ void test4() {
 
     //高斯模糊
     Mat gaussian;
-    //sigmaX、sigmaY:
+    //sigmaX、sigmaY:用于控制正态分布是否平缓
+    //最后还有个参数borderType，控制 卷积操作时 边缘是如何填充的
     GaussianBlur(src, gaussian, Size(121, 121), 0);
     imshow("gaussian", gaussian);
     waitKey(0);
@@ -172,7 +173,22 @@ void test6() {
     waitKey(0);
 }
 
+/**
+ * 卷积操作时，处理边缘类型
+ */
+void test7() {
+    Mat src = imread("a.jpeg");
+    Mat dst;
+    //BORDER_DEFAULT：用周边边缘来填充
+    //BORDER_WRAP：用对边填充
+    //BORDER_REFLECT:用周边像素来填充
+    //BORDER_CONSTANT:用常数来填充
+    copyMakeBorder(src, dst, src.rows / 8, src.rows / 8, src.cols / 8, src.cols / 8, BORDER_CONSTANT,
+                   Scalar(255, 0, 0));
+    imshow("dst", dst);
+    waitKey(0);
+}
 
 int main() {
-    test6();
+    test7();
 }

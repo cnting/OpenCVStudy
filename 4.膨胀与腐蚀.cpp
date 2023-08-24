@@ -16,6 +16,7 @@ Mat src;
 void trackbarCallback(int pos, void *userdata) {
     //创建一个 kernel
     int size = element_size * 2 + 1;
+    //最后一个参数anchor(-1，-1)表示卷积核覆盖的矩阵的中心点
     Mat kernel = getStructuringElement(MORPH_RECT, Size(size, size));
     Mat dst;
     erode(src, dst, kernel);

@@ -5,7 +5,40 @@ using namespace std;
 using namespace cv;
 
 /**
- * Mat的基本使用
+ * Mat基本概念：
+ * https://blog.csdn.net/dcrmg/article/details/52294259
+ *
+ * data:指向Mat数据矩阵的首地址
+ *
+ * dims:矩阵的维度，如果是二维矩阵，dims=2
+ *
+ * rows:矩阵的行数
+ *
+ * cols:矩阵的列数
+ *
+ * size():是个结构体，有如下关系
+ * （1）src.size().width==src.cols
+ * （2）src.size().height==src.rows
+ *
+ * channels():矩阵的通道数
+ * （1）如果是RGB彩色通道，channels=3;
+ * （2）如果是灰度图，channels=1
+ *
+ * depth:用来度量每一个像素中每一个通道的精度，但它本身与图像的通道数无关！
+ * 数值越大，精度越高。Mat.depth()得到的是一个0~6的数字
+ * 对应关系：{CV_8U=0,CV_8S=1,CV_16U=2,CV_16S=3,CV_32S=4,CV_32F=5,CV_64F=6}
+ * U表示unsigned，S表示signed
+ *
+ * elemSize：表示矩阵中每个元素的数据大小，如果是CV_8UC1，elemSize=1
+ *
+ * elemSize1 = elemSize/channels
+ *
+ * step:矩阵中每一行的步长，以字节为单位，每一行中所有元素的字节总量
+ *
+ * step1=step/elemSize1
+ *
+ * type:矩阵的类型，包含矩阵中元素的类型以及通道数信息
+ * type命名格式是：CV_(位数)(数据类型)(通道数)，比如CV_8UC1
  */
 void test1() {
     Mat src = imread("a.jpeg");
@@ -61,7 +94,7 @@ void test1() {
 }
 
 /**
- * 区域截取，不改变原图
+ * 区域截取，改变原图
  */
 void test2() {
     Mat src = imread("a.jpeg");
@@ -92,7 +125,7 @@ void test2() {
 }
 
 /**
- * 区域截取，改变原图
+ * 区域截取，不改变原图
  */
 void test3() {
     Mat src = imread("a.jpeg");

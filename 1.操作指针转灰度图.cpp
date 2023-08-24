@@ -19,6 +19,8 @@ void test1() {
 }
 
 /**
+ * 指针操作：https://blog.csdn.net/shuiyixin/article/details/106182880
+ *
  * 操作指针换灰度图
  *
  * uchar 1个字节，8bit，范围：0~255
