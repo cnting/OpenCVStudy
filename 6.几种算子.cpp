@@ -27,12 +27,12 @@ void test1() {
  * https://blog.csdn.net/shuiyixin/article/details/104484635
  * Sobel算子，常用来做边缘检测。有两个算子计算，就比较慢
  *
- * x方向明显：
+ * x方向：
  * [-1,0,1
  * -2,0,2
  * -1,0,1]
  *
- * y方向明显：
+ * y方向：
  * [-1,-2,-1
  * 0,0,0
  * 1,2,1]
@@ -64,7 +64,13 @@ void test2() {
     cvtColor(gaussian, gray, COLOR_BGR2GRAY);
     //3.Sobel(梯度)
     Mat sobel_x, sobel_y;
-    //ddepth -1表示与gray.depth相同，这里要传比gray的depth高的值
+    //ddepth：输出图像的深度，-1表示与gray.depth相同，这里要传比gray的depth高的值
+    //dx：导数x的阶数
+    //dy：导数y的阶数
+    //ksize：扩展Sobel内核的大小，必须是1、3、5、7
+    //scale：缩放倍数
+    //delta：给所选的像素值添加一个值delta
+    //boderType：边界模式
     Sobel(gray, sobel_x, CV_32F, 1, 0, 3);
     Sobel(gray, sobel_y, CV_32F, 0, 1, 3);
     //4.取正值
@@ -87,11 +93,19 @@ void test2() {
 
 /**
  * Scharr是Sobel的增强版，效果号，速度慢
+ * x方向：
+ * [-3,0,3
+ * -10,0,10
+ * -3,0,3]
+ *
+ * y方向：
+ * [-3,-10,-3
+ * 0,0,0
+ * 3,10,3]
  */
 void test3() {
     Mat src = imread("card1.jpeg");
 
-    //系统已经提供了这个方法，就不用上面那样写了
     //一般步骤：
     //1.降噪（高斯）
     Mat gaussian;
@@ -111,7 +125,7 @@ void test3() {
 //    Mat scharr;
 //    addWeighted(scharr_x, 0.5, scharr_y, 0.5, 0, scharr);
 
-    //这里手写下第5步
+    //这里手写下第5步来练习
     Mat scharr(gray.size(), gray.type());
     int width = gray.cols;
     int height = gray.rows;
@@ -157,7 +171,6 @@ void test4() {
 void test5() {
     Mat src = imread("card1.jpeg");
 
-    //系统已经提供了这个方法，就不用上面那样写了
     //一般步骤：
     //1.降噪（高斯）
     Mat gaussian;
@@ -167,6 +180,8 @@ void test5() {
     cvtColor(gaussian, gray, COLOR_BGR2GRAY);
     //3.拉普拉斯
     Mat lpls;
+    //ksize:用于计算二阶导数滤波器的孔径大小。大小必须是正数和奇数
+    //scale:计算拉普拉斯值的可选比例因子。默认情况下，不应用缩放。
     Laplacian(gray, lpls, CV_16S, 5);
     //4.会有负数，要求绝对值
     convertScaleAbs(lpls, lpls);
@@ -198,15 +213,19 @@ void test6() {
 }
 
 /**
- * https://blog.csdn.net/shuiyixin/article/details/104529465
+ * https://juejin.cn/post/6844904117299576846
  * Canny算子原理：
- * 1.用高斯模糊去噪声
- * 2.灰度转换
- * 3.计算梯度 Sobel/Scharr
- * 4.非最大信号抑制（只保留最大值），所以线比较细
- * 5.高低阈值输出二值图像（0，255）threshold1是低阈值，threshold2是高阈值。
+ * 1.用高斯滤波去噪声
+ * 2.计算图像梯度及方向，也就是寻找图像中灰度强度变化最强的位置，使用Sobel/Scharr。
+ * 3.非最大信号抑制（只保留最大值），所以线比较细
+ * 4.双阈值检测：threshold1是低阈值，threshold2是高阈值。
  *   在threshold1~threshold2之间取255，否则取0
  *   取值时尽量1：2 或1：3，比如30-60、30-90、50-100、50-150
+ * 5.边缘连接：利用高阈值来确定主要边缘轮廓（强边缘），并利用与强边缘连接的低阈值所得弱边缘来填补缺失边缘，并防止引入噪声（不与强边缘相连的弱边缘就归零）。
+ *
+ *
+ * 图像梯度介绍：
+ * https://zhuanlan.zhihu.com/p/113397988
  */
 void test7() {
     Mat src = imread("card1.jpeg");

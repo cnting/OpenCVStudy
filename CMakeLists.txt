@@ -7,6 +7,6 @@ find_package(OpenCV)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(OpenCVStudy 6.几种算子.cpp)
+add_executable(OpenCVStudy 8.霍夫直线检测与重映射.cpp)
 
 target_link_libraries(OpenCVStudy ${OpenCV_LIBS})

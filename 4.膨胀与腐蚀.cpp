@@ -16,7 +16,7 @@ Mat src;
 void trackbarCallback(int pos, void *userdata) {
     //创建一个 kernel
     int size = element_size * 2 + 1;
-    //最后一个参数anchor(-1，-1)表示卷积核覆盖的矩阵的中心点
+    //最后一个参数anchor(-1，-1)表示卷积核覆盖的矩阵的中心点。请注意，只有十字形元素的形状取决于锚定位置。在其他情况下，锚只是调节形态学操作结果的移动量。
     Mat kernel = getStructuringElement(MORPH_RECT, Size(size, size));
     Mat dst;
     erode(src, dst, kernel);
@@ -59,26 +59,28 @@ void test2() {
 
     waitKey(0);
 }
-
+/**
+ * https://blog.csdn.net/shuiyixin/article/details/104369163
+ */
 void test3() {
     Mat s = imread("f.webp");
     imshow("原始", s);
 
     Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
     Mat dst;
-    //开操作：先腐蚀后膨胀
+    //开操作：先腐蚀后膨胀，可以去掉小对象
 //    morphologyEx(s, dst, MORPH_OPEN, kernel);
 
-    //闭操作：先膨胀后腐蚀
+    //闭操作：先膨胀后腐蚀，可以填充小对象
 //    morphologyEx(s, dst, MORPH_CLOSE, kernel);
 
     //梯度：膨胀-腐蚀，得到轮廓
 //    morphologyEx(s, dst, MORPH_GRADIENT, kernel);
 
-    //顶帽：原图像-开操作
+    //顶帽：原图像与开操作图像之间的差值图像
 //    morphologyEx(s, dst, MORPH_TOPHAT, kernel);
 
-    //黑帽：闭图像-原图像
+    //黑帽：闭操作图像与原图像之间的差值图像
     morphologyEx(s, dst, MORPH_BLACKHAT, kernel);
 
 
