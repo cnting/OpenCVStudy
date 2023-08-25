@@ -20,6 +20,7 @@ void test1() {
 //    ellipse(src, Point(src.cols / 2, src.rows / 2), Size(src.cols / 8, src.rows / 4), 180, 0, 360, Scalar(0, 255, 0),1);
 
     //圆
+    //LINE_AA表示抗锯齿，https://blog.csdn.net/wenhao_ir/article/details/125535836
 //    circle(src, Point(src.cols / 2, src.rows / 2), 100, Scalar(255, 255, 0), 3,LINE_AA);
 
     //填充多边形

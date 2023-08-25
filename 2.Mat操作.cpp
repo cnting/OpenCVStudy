@@ -38,7 +38,13 @@ using namespace cv;
  * step1=step/elemSize1
  *
  * type:矩阵的类型，包含矩阵中元素的类型以及通道数信息
- * type命名格式是：CV_(位数)(数据类型)(通道数)，比如CV_8UC1
+ * type命名格式是：CV_(位数)(数据类型)C(通道数)，比如CV_8UC1
+ * 数据类型可选S|U|F，S=符号整型，U=无符号整型，F=浮点型
+ * 比如：
+ * CV_8UC1：8位无符号整型单通道矩阵
+ * CV_32FC2：32位浮点型双通道矩阵
+ *
+ * 通道表示每个点能存放多少个数。比如RGB彩色图中每个像素点有3个值，就是3通道的。灰度图每个像素点就1个值，就是单通道的
  */
 void test1() {
     Mat src = imread("a.jpeg");
@@ -95,6 +101,8 @@ void test1() {
 
 /**
  * 区域截取，改变原图
+ *
+ * Vec3b：https://blog.csdn.net/wenhao_ir/article/details/51132112
  */
 void test2() {
     Mat src = imread("a.jpeg");
