@@ -27,22 +27,27 @@ void test1() {
 }
 
 /**
- * 彩色图均衡化
+ * 彩色图均衡化，这里练习提升亮度
  */
 void test2() {
-    Mat src = imread("a.jpeg");
+    Mat src = imread("scene.jpeg");
     imshow("src", src);
+
+    Mat hsv;
+    cvtColor(src, hsv, COLOR_BGR2HSV);
 
     vector<Mat> bgr_s;
     //将图像分割成三个通道
-    split(src, bgr_s);
-    //对每个通道均衡化
-    equalizeHist(bgr_s[0], bgr_s[0]);
-    equalizeHist(bgr_s[1], bgr_s[1]);
+    split(hsv, bgr_s);
+
+    //对v通道均衡化
     equalizeHist(bgr_s[2], bgr_s[2]);
     //合并通道
+    merge(bgr_s, hsv);
+
+    //imshow是按BGR来显示的，所以要再转成BGR
     Mat dst;
-    merge(bgr_s, dst);
+    cvtColor(hsv,dst,COLOR_HSV2BGR);
     imshow("dst", dst);
 
     waitKey(0);
@@ -94,10 +99,10 @@ void test3() {
     int hist_w = 512;
     int bin_w = hist_w / histSize;//画笔的大小
     /**
+     * https://tony-laoshi.github.io/opencv%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E5%8C%96%E5%92%8C%E5%BD%92%E4%B8%80%E5%8C%96/
+     *
      * normalize( InputArray src, InputOutputArray dst, double alpha = 1, double beta = 0,
                              int norm_type = NORM_L2, int dtype = -1, InputArray mask = noArray())
-     */
-    /**
      * alpha：最小值
      * beta：最大值
      * norm_type：
@@ -190,6 +195,42 @@ void test4() {
 //    waitKey(0);
 }
 
+/**
+ * 直方图反向投影，用于目标检测
+ * https://blog.csdn.net/shuiyixin/article/details/80331839
+ */
+Mat hueImage;
+int bins = 2;
+int max_bins = 180;
+
+void hist_backprojection(int, void *) {
+    Mat hist;
+    int histSize = MAX(bins, 2);
+    float hue_range[] = {0, 180};
+    const float *ranges[] = {hue_range};
+    calcHist(&hueImage, 1, 0, Mat(), hist, 1, &histSize, ranges);
+    normalize(hist, hist, 0, 255, NORM_MINMAX);
+
+    Mat backProject;
+    calcBackProject(&hueImage, 1, 0, hist, backProject, ranges);
+    imshow("SourceImage", backProject);
+}
+
+void test5() {
+    Mat src = imread("clothes.jpeg");
+    Mat hsv;
+    cvtColor(src, hsv, COLOR_BGR2HSV);
+    vector<Mat> hsv_s;
+    split(hsv, hsv_s);
+    hueImage = hsv_s[0];
+
+    namedWindow("SourceImage");
+    createTrackbar("backprojection", "SourceImage", &bins, max_bins, hist_backprojection);
+    hist_backprojection(bins, 0);
+
+    waitKey(0);
+}
+
 int main() {
-    test3();
+    test2();
 }
