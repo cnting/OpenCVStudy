@@ -22,7 +22,7 @@ void test1() {
     //lines:信息里包含多条直线，每条直线两个点
     //rho:像素间隙扫描
     //theta:每次增加的角度,CV_PI/180表示增加1度
-    //threshold:低阈值
+    //threshold:低阈值，只返回获得足够累加器数量的直线
     //minLineLength：线的最小长度
     //maxLineGap：点之间的间隙。在做canny时，原本是同一线的可能会断开出现一些间隙，这里指定maxLineGap以内的间隙可以认为忽略，也就是把这个间隙连起来
     vector<Vec4f> plines;

@@ -17,8 +17,8 @@ void test1() {
         for (int col = 0; col < src.cols; col++) {
             //这里定义的不是像素，而且取转换后的像素的位置
             //左右调换
-//            map_x.at<float>(row, col) = static_cast<float >(src.cols - col);
-//            map_y.at<float>(row, col) = row;
+            map_x.at<float>(row, col) = static_cast<float >(src.cols - col);
+            map_y.at<float>(row, col) = row;
 
             //上下调换
 //            map_x.at<float>(row, col) = col;

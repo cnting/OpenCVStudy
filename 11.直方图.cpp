@@ -47,7 +47,7 @@ void test2() {
 
     //imshow是按BGR来显示的，所以要再转成BGR
     Mat dst;
-    cvtColor(hsv,dst,COLOR_HSV2BGR);
+    cvtColor(hsv, dst, COLOR_HSV2BGR);
     imshow("dst", dst);
 
     waitKey(0);
@@ -72,16 +72,15 @@ void test3() {
                           const int* channels, InputArray mask,
                           OutputArray hist, int dims, const int* histSize,
                           const float** ranges, bool uniform = true, bool accumulate = false );
-     */
-    /**
+     *
      * images:输入的图像
      * nimages:输入图像的个数
      * channels:需要统计直方图的第几通道
      * mask:掩膜，不需要掩膜的话就传Mat()
      * hist:输出
      * dims：需要统计的通道个数
-     * histSize：直方图分成多少个区间 0~255
-     * ranges：数据的范围，rgb是0~255，hsv是0~1
+     * histSize：直方图分成多少个区间
+     * ranges：数据的范围
      * uniform：是否对得到的图片结果进行归一化处理
      * accumulate：在多个图像时，是否累计计算像素值的个数
      */
@@ -231,6 +230,132 @@ void test5() {
     waitKey(0);
 }
 
+/**
+ * 对图片亮度进行直方均衡
+ */
+void test6() {
+    Mat src = imread("a.jpeg");
+    imshow("src", src);
+
+    Mat hsv;
+    cvtColor(src, hsv, COLOR_BGR2HSV);
+
+    vector<Mat> hsv_s;
+    split(hsv, hsv_s);
+
+    equalizeHist(hsv_s[2], hsv_s[2]);
+    merge(hsv_s, hsv);
+
+    cvtColor(hsv, src, COLOR_HSV2BGR);
+    imshow("dst", src);
+    waitKey(0);
+}
+
+/**
+ * 手写直方图计算
+ */
+void calcHist(const Mat &gray, Mat &hist) {
+    hist.create(1, 256, CV_32S);
+    for (int i = 0; i < hist.cols; i++) {
+        hist.at<int>(0, i) = 0;
+    }
+    for (int row = 0; row < gray.rows; row++) {
+        for (int col = 0; col < gray.cols; col++) {
+            int index = gray.at<uchar>(row, col);
+            hist.at<int>(0, index) += 1;
+        }
+    }
+
+}
+
+/**
+ * 手写归一化
+ */
+void normalize(const Mat &src, Mat &dst, int n_Max) {
+    int max_value = 0;
+    for (int row = 0; row < src.rows; row++) {
+        for (int col = 0; col < src.cols; col++) {
+            int value = src.at<int>(row, col);
+            max_value = max(value, max_value);
+        }
+    }
+    dst.create(src.size(), src.type());
+    for (int row = 0; row < src.rows; row++) {
+        for (int col = 0; col < src.cols; col++) {
+            int value = src.at<int>(row, col);
+            dst.at<int>(row, col) = value * 1.0 / max_value * n_Max;
+        }
+    }
+}
+
+/**
+ * 手写直方均衡
+ *
+ * 1.直方图统计
+ * 2.计算直方图中像素的概率
+ * 3.生成一张映射表
+ * 4.从映射表中查找赋值
+ */
+void equalizeHist(const Mat &src, Mat &dst) {
+    Mat hist;
+    //1.直方图统计，得到0~255之间每个灰度值所占的像素点个数
+    calcHist(src, hist);
+
+    //2.计算直方图中像素的概率
+    Mat prob_mat(hist.size(), CV_32FC1);
+    float image_size = src.rows * src.cols;
+    float prob_sum = 0;
+    for (int i = 0; i < hist.cols; i++) { //这个i是灰度值
+        float prob = hist.at<int>(0, i) / image_size;
+        prob_sum += prob;
+        prob_mat.at<float>(0, i) = prob_sum;
+    }
+    //3.生成一张映射表
+    Mat map(hist.size(), CV_32FC1);
+    for (int i = 0; i < prob_mat.cols; i++) {  //这个i是灰度值
+        float prob = prob_mat.at<float>(0, i);
+        map.at<float>(0, i) = prob * 255;
+    }
+    dst.create(src.size(), src.type());
+    for (int row = 0; row < src.rows; row++) {
+        for (int col = 0; col < src.cols; col++) {
+            uchar pixels = src.at<uchar>(row, col);
+            dst.at<uchar>(row, col) =  map.at<float>(0, pixels);
+        }
+    }
+}
+
+void test7() {
+    Mat src = imread("a.jpeg");
+
+    Mat gray;
+    cvtColor(src, gray, COLOR_BGR2GRAY);
+
+    //这样定义得到的是空数组
+//    Mat hist;
+//    calcHist(gray, hist);
+
+    //归一
+//    normalize(hist, hist, 255);
+
+    //画图
+//    int bin_w = 5;
+//    Mat hist_mat(256, bin_w * 256, CV_8UC3);
+//    for (int i = 0; i < 256; i++) {
+//        Point start(i * bin_w, hist_mat.rows);
+//        Point end(i * bin_w, hist_mat.rows - hist.at<int>(0, i));
+//        line(hist_mat, start, end, Scalar(255, 0, 255), bin_w,LINE_AA);
+//    }
+//
+//    imshow("hist", hist_mat);
+
+    //直方均衡
+    equalizeHist(gray, gray);
+    imshow("gray", gray);
+
+    waitKey(0);
+}
+
 int main() {
-    test2();
+    test7();
 }

@@ -92,7 +92,7 @@ void test2() {
 }
 
 /**
- * Scharr是Sobel的增强版，效果号，速度慢
+ * Scharr是Sobel的增强版，效果好，速度慢
  * x方向：
  * [-3,0,3
  * -10,0,10
@@ -180,7 +180,7 @@ void test5() {
     cvtColor(gaussian, gray, COLOR_BGR2GRAY);
     //3.拉普拉斯
     Mat lpls;
-    //ksize:用于计算二阶导数滤波器的孔径大小。大小必须是正数和奇数
+    //ksize:用于计算二阶导数滤波器的孔径大小。大小必须是正的奇数
     //scale:计算拉普拉斯值的可选比例因子。默认情况下，不应用缩放。
     Laplacian(gray, lpls, CV_16S, 5);
     //4.会有负数，要求绝对值
@@ -230,11 +230,15 @@ void test6() {
 void test7() {
     Mat src = imread("card1.jpeg");
     Mat dst;
-    //最后一个参数：L2gradient是false，L1gradient是true
-    //在test2()里说到要取正值有两种方法：
-    //（1）sobel = 开根号(sobel_x^2 + sobel_y^2)，这个对应的是L1gradient
-    //（2）sobel = abs(sobel_x) + abs(sobel_y)，这个对应的是L2gradient
-    //最后一个参数传了false，就是用第二种方法取正值
+    /**
+     * apertureSize，Sobel运算符的孔径大小。
+     *
+     * 最后一个参数：L2gradient是false，L1gradient是true
+     * 在test2()里说到要取正值有两种方法：
+     *（1）sobel = 开根号(sobel_x^2 + sobel_y^2)，这个对应的是L1gradient
+     *（2）sobel = abs(sobel_x) + abs(sobel_y)，这个对应的是L2gradient
+     * 最后一个参数传了false，就是用第二种方法取正值
+     */
     Canny(src, dst, 50, 150, 3, false);
     imshow("dst", dst);
 
